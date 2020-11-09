@@ -45,15 +45,13 @@ func (s *APIserver) configureLogger() error {
 }
 
 func (s *APIserver) configureRouter()  {
-
 	s.router.HandleFunc("/hello", s.hahdleHello())
-
 }
 
 func (s *APIserver) hahdleHello() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request){
 		io.WriteString(w, "Hello")
+		
 	}
-
 }

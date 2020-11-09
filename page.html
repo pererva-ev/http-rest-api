@@ -1,0 +1,43 @@
+<!doctype html>
+
+
+<html lang="en">
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+        </script>
+    </head>
+    <body>
+    
+               <br> Please confirm to proceed : <button class="myConfirmButton1">Go!!</button>
+    
+              <div id="loader1" style="display:none;">loading...</div>
+              <div id="loader2" style="display:none;">...done</div>
+              <div id="myFeedback1"></div>
+    
+           <script>
+           $(document).ready(function(){
+             $(".myConfirmButton1").click(function(){
+               $('#loader1').show();
+               $.ajax({
+                 url:"http://localhost:8080/hello",
+                 dataType:'html',
+                 headers: {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "access-control-allow-origin, access-control-allow-headers"},
+                 type:'get',
+                 contentType: 'application/x-www-form-urlencoded',
+                 success: function( data, textStatus, jQxhr ){
+                 $('#loader1').hide();
+                 $('#loader2').show();
+                 $('#myFeedback1').html( data );
+                         },
+                 error: function( jqXhr, textStatus, errorThrown ){
+                 $('#loader1').hide();
+                 $('#myFeedback1').html( errorThrown );
+                 alert("error" + errorThrown);
+                         }
+                 });
+            });
+           });
+           </script>
+    </body>
+</html>
+
