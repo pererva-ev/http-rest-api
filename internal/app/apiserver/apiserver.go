@@ -3,10 +3,13 @@ package apiserver
 import (
 	"io"
 	"net/http"
-
+	"sync/atomic"
+	// "fmt"
+	"strconv"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 )
+var requests int64 = 0
 
 //APIserver ...
 type APIserver struct {
@@ -51,7 +54,24 @@ func (s *APIserver) configureRouter()  {
 func (s *APIserver) hahdleHello() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request){
-		io.WriteString(w, "Hello")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		incRequests()
+		str := strconv.FormatInt(getRequests(), 10)
+		// fmt.Println(str)
+	
+
+		io.WriteString(w, str)
+		
 		
 	}
+}
+
+// increments the number of requests and returns the new value
+func incRequests() int64 {
+    return atomic.AddInt64(&requests, 1)
+}
+
+// returns the current value
+func getRequests() int64 {
+    return atomic.LoadInt64(&requests)
 }

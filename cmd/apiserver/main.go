@@ -19,12 +19,7 @@ func init() {
 }
 
 
-func Cors(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=ascii")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers","Content-Type,access-control-allow-origin, access-control-allow-headers")
-	w.Write([]byte("Hello, World!"))
-	}
+
 
 func main() {
 	flag.Parse()
@@ -48,10 +43,7 @@ func main() {
         req.Close = false
 		req.Header.Add("User-Agent", "myClient")
 		
-		mux := http.NewServeMux()
-		mux.HandleFunc("/hello",Cors)
-		http.ListenAndServe(":8080", mux)
-		
+
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -65,44 +57,3 @@ func main() {
         fmt.Println(string(body))
 	}
 }
-// package main
-
-// import (
-//     "net/http"
-//     "sync/atomic"
-// )
-
-// var requests int64 = 0
-
-// // increments the number of requests and returns the new value
-// func incRequests() int64 {
-//     return atomic.AddInt64(&requests, 1)
-// }
-
-// // returns the current value
-// func getRequests() int64 {
-//     return atomic.LoadInt64(&requests)
-// }
-
-// func handler(w http.ResponseWriter, r *http.Request) {
-
-//     incRequests()
-
-//     // handle the request here ...
-// }
-
-// func main() {
-//     http.HandleFunc("/", handler)
-//     log.Fatal(http.ListenAndServe(":8080", nil))
-// }
-
-// <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-// <script>
-// 	(async () => {
-// 		const response = await axios({
-// 		url: 'http://localhost:8080/hello',
-// 		method: 'get'
-// 	})
-// 	alert(response)
-// 	})()
-// </script>
