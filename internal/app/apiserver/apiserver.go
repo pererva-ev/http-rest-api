@@ -4,11 +4,15 @@ import (
 	"io"
 	"net/http"
 	"sync/atomic"
+
 	// "fmt"
 	"strconv"
+
 	"github.com/gorilla/mux"
+	"github.com/pererva-ev/http-rest-api/internal/app/store"
 	"github.com/sirupsen/logrus"
 )
+
 var requests int64 = 0
 
 //APIserver ...
@@ -16,6 +20,7 @@ type APIserver struct {
 	config *Config
 	logger *logrus.Logger
 	router *mux.Router
+	store  *store.Store
 }
 
 // New ...
@@ -32,7 +37,13 @@ func (s *APIserver) Start() error {
 	if err := s.configureLogger(); err != nil {
 		return err
 	}
+
 	s.configureRouter()
+
+	if err := s.configureStore(); err != nil {
+		return err
+	}
+
 	s.logger.Info("starting api server")
 	return http.ListenAndServe(s.config.BindAddr, s.router)
 }
@@ -47,31 +58,40 @@ func (s *APIserver) configureLogger() error {
 	return nil
 }
 
-func (s *APIserver) configureRouter()  {
+func (s *APIserver) configureRouter() {
 	s.router.HandleFunc("/hello", s.hahdleHello())
+}
+
+func (s *APIserver) configureStore() error {
+	st := store.New(s.config.Store)
+	if err := st.Open(); err != nil {
+		return err
+	}
+
+	s.store = st
+
+	return nil
 }
 
 func (s *APIserver) hahdleHello() http.HandlerFunc {
 
-	return func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		incRequests()
 		str := strconv.FormatInt(getRequests(), 10)
 		// fmt.Println(str)
-	
 
 		io.WriteString(w, str)
-		
-		
+
 	}
 }
 
 // increments the number of requests and returns the new value
 func incRequests() int64 {
-    return atomic.AddInt64(&requests, 1)
+	return atomic.AddInt64(&requests, 1)
 }
 
 // returns the current value
 func getRequests() int64 {
-    return atomic.LoadInt64(&requests)
+	return atomic.LoadInt64(&requests)
 }
